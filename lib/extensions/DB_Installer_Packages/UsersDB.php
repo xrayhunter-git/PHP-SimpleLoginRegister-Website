@@ -10,6 +10,7 @@
                 "salt" => "VARCHAR(32) NOT NULL",
                 "email" => "TEXT NOT NULL",
                 "legalName" => "TEXT NOT NULL",
+                "bio" => "TEXT NOT NULL",
                 "authorizationCode" => "TEXT NOT NULL",
                 "authorized" => "TINYINT(1) NOT NULL",
                 "authIPAddresses" => "TEXT NOT NULL",

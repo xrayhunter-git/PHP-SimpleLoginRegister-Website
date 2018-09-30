@@ -1,6 +1,6 @@
 <?php
     require_once 'core/init.php';
-    $data = null;
+    $user = null;
     if (!$username = InputValidation::get('user'))
         Redirect::to('index.php');
     else
@@ -9,10 +9,6 @@
         if (!$user->exists())
         {
             Redirect::to(404);
-        }
-        else
-        {
-            $data = $user->getData();
         }
     }
 
@@ -39,8 +35,18 @@
     ?>
     
     <!-- Where to place content [START] -->
-
-    
+    <div class='container justify-content-center'>
+            <div class="card ">
+                <img class="card-img-top" src="<?php echo Config::get('website'); ?>res/imgs/default_profile.png" alt="">
+                <h6 class="card-subtitle mb-2 text-muted"><?php echo $user->getData()->username; ?></h6>
+                <div class="card-body">
+                    <p class="card-text">
+                        <h3>Bio:</h3><hr/>
+                        <?php echo $user->getData()->bio; ?>
+                    </p>
+                </div>
+            </div>
+    </div>
 
     <!-- Where to place content [END] -->
 

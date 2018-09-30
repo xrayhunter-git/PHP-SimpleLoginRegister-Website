@@ -14,7 +14,7 @@
         <div class="collapse navbar-collapse" id="collapsibleNavId">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#"><?php echo $langue->getDialog($lang, "home") ?> <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="<?php echo Config::get('website'); ?>index.php"><?php echo $langue->getDialog($lang, "home") ?> <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#"><?php echo $langue->getDialog($lang, "store") ?></a>
@@ -168,7 +168,7 @@
                                     <?php echo $user->getData()->username; ?>
                                 </button>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDrop">
-                            <a class="dropdown-item" href="<?php echo Config::get('website'); ?>profile.php"><?php echo $langue->getDialog($lang, "account_profile"); ?></a>
+                            <a class="dropdown-item" href="<?php echo Config::get('website'); ?>profile.php?user=<?php echo $user->getData()->username; ?>"><?php echo $langue->getDialog($lang, "account_profile"); ?></a>
                             <a class="dropdown-item" href="<?php echo Config::get('website'); ?>profile_settings.php"><?php echo $langue->getDialog($lang, "account_settings");?></a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="<?php echo Config::get('website'); ?>/inc/posts/logout.php"><?php echo $langue->getDialog($lang, "account_logout");?></a>

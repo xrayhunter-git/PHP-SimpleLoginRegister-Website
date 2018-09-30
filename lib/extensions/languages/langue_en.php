@@ -45,6 +45,14 @@
                 Sorry, we couldn\'t either find you account or your credentials do not match with this account. Please try again or <br/>
                 <a href="#">Click here for some assistance</a>!
             '); 
+            self::addDialog($l, "login_failed_noauth", '
+                Sorry, this computer doesn\'t have access to this account. We\'ve sent a authorization certificate to your E-Mail to verify yourself.<br/>
+                <a href="#">Resend authorization certification to my E-Mail</a>
+            '); 
+            self::addDialog($l, "login_failed_notverified", '
+                Sorry, you need to verify your e-mail before logging in! <br/>
+                <a href="#">Resend Verification to my E-Mail</a>
+            '); 
         }
     }
 ?>

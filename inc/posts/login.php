@@ -19,13 +19,33 @@ if(InputValidation::exists())
         if($check->hasPassed())
         {
             $user = new User(Config::get('mysql'));
-            $remember = (InputValidation::get('remember') == 'Yes');
-            $login = $user->login(InputValidation::get('username'), InputValidation::get('password'), $remember);
-
-            if ($login)
+            
+            if ($user->loginCheck(InputValidation::get('username'), InputValidation::get('password')))
             {
-                Session::flash('login_message', 'login_success');
-                Redirect::to("../../index.php");
+                $verified = $user->isVerified(InputValidation::get('username'));
+                if ($verified)
+                {
+                    $auth = $user->hasAuthorization(InputValidation::get('username'));
+                    if ($auth)
+                    {
+                        $remember = (InputValidation::get('remember') == 'Yes');
+                        $login = $user->login(InputValidation::get('username'), InputValidation::get('password'), $remember);
+
+                        if ($login)
+                        {
+                            Session::flash('login_message', 'login_success');
+                            Redirect::to("../../index.php");
+                        }
+                    }
+                    else
+                    {
+                        $check->addError($langue->getDialog($lang, 'login_failed_noauth'));
+                    }
+                }
+                else
+                {
+                    $check->addError($langue->getDialog($lang, 'login_failed_notverified'));
+                }
             }
             else
             {
@@ -33,6 +53,15 @@ if(InputValidation::exists())
             }
         }
     }
+    else
+    {
+        echo 'Forgry attack!';
+        echo Session::get('Token_login') . " | " . InputValidation::get('Token_login');
+    }
+}
+else
+{
+    echo 'No entries';
 }
 ?>
 
@@ -97,7 +126,7 @@ if(InputValidation::exists())
                                 <?php echo $langue->getDialog($lang, "remember_me"); ?> <br/>
                             </label>
                         </div>
-                        <?php //echo Token::generate('login'); ?>
+                        <?php echo Token::generate('login'); ?>
                         <button type="submit" class="btn btn-primary mb-2"><?php echo $langue->getDialog($lang, "login"); ?> </button>
                     </form>
                     <hr/>

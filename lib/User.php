@@ -58,42 +58,86 @@
             return true;
         }
 
-        public function login(string $username = null, string $password = null, $remember = false)
+        public function loginCheck(string $username = null, string $password = null, $remember = false)
         {
+            
             $user = $this->find($username);
 
             if ($user)
             {
                 if($this->getData()->password == Hash::make($password, $this->getData()->salt))
                 {
-                    Session::put('user', $this->getData()->id);
-
-                    if($remember)
-                    {
-                        $hash = Hash::unique();
-                        $check = $this->_db->get('users_sessions', array('user_id', '=', $this->getData()->id));
-
-                        if (!$check->getCount())
-                        {
-                            $this->_db->insert('users_sessions', array(
-                                'user_id' => $this->getData()->id,
-                                'hash' => $hash,
-                                'createdDate' => date('Y-m-d H:i:s')
-                            ));
-                        }
-                        else
-                        {
-                            $hash = $check->getFirst()->hash;
-                        }
-
-                        Cookie::put('authlogin', $hash, 604800);
-                    }
-
                     return true;
                 }
             }
 
             return false;
+        }
+
+        public function login(string $username = null, string $password = null, $remember = false)
+        {
+            if($this->loginCheck($username, $password))
+            {
+                Session::put('user', $this->getData()->id);
+
+                if($remember)
+                {
+                    $hash = Hash::unique();
+                    $check = $this->_db->get('users_sessions', array('user_id', '=', $this->getData()->id));
+
+                    if (!$check->getCount())
+                    {
+                        $this->_db->insert('users_sessions', array(
+                            'user_id' => $this->getData()->id,
+                            'hash' => $hash,
+                            'createdDate' => date('Y-m-d H:i:s')
+                        ));
+                    }
+                    else
+                    {
+                        $hash = $check->getFirst()->hash;
+                    }
+
+                    Cookie::put('authlogin', $hash, 604800);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public function hasAuthorization($username)
+        {
+            $user = $this->find($username);
+
+            if ($this->exists())
+            {
+                $myIP = grabClientIPAddress();
+                $authIPs = json_decode($this->getData()->authIPAddresses);
+
+                if (in_array($myIP, $authIPs))
+                    return true;
+            }
+            return false;
+        }
+
+        public function isVerified($username)
+        {
+            $user = $this->find($username);
+
+            if ($this->exists())
+            {
+                if ($this->getData()->authorized)
+                    return true;
+            }
+                    
+            return false;
+        }
+
+        public function verify($username = null)
+        {
+            return $this->update(array('authorized' => '1'));
         }
 
         public function logout()
@@ -110,10 +154,16 @@
                 $id = $this->getData()->id;
             }
 
-            if (!$this->_db->update('users', $id, $fields))
+            if (!($q = $this->_db->update('users', array('id', '=', $id), $fields)))
             {
                 throw new Exception("An error occured updating {$id}'s account information!");
             }
+            else
+            {
+                return $this;
+            }
+
+            return false;
         }
 
         public function find($username = null)

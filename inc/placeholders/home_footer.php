@@ -2,7 +2,7 @@
     require_once __DIR__.'/../../core/init.php';
     include_once __DIR__.'/languageSetup.php';
 ?>
-<footer class="footer fixed-bottom bg-dark" style="max-width: 100%; color: white; text-decoration: none;">
+<footer class="footer bg-dark" style="max-width: 100%; color: white; text-decoration: none;">
     <div class="container">
         <div class="row">
             <div class="col-sm" style="">
