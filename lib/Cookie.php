@@ -16,7 +16,7 @@
 
         public static function put($name, $value, $expire)
         {
-            if(setcookie($name, $value, time() + $expire, '/'))
+            if(setcookie($name, $value, (int)(time() + $expire), '/'))
                 return true;
 
             return false;

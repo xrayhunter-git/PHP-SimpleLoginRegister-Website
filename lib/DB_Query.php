@@ -34,7 +34,7 @@
 
             $this->_sql = $sql;
 
-            $cannotFetch = array("UPDATE", "INSERT", "CREATE", "DELETE");
+            $cannotFetch = array("UPDATE", "INSERT", "CREATE", "DELETE", "USE");
             switch($this->_type)
             {
                 case 'mysqli':

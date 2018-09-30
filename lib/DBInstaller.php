@@ -46,10 +46,12 @@
             $this->_executions = array();
             foreach($this->_packages as $package)
             {
+                $x = 0;
                 foreach($package->build() as $instructions)
                 {
-                    $table = array_keys($package->build())[0];
+                    $table = array_keys($package->build())[$x];
                     
+                    echo $table;
                     if (isset($instructions['primary']))
                         array_push($instructions["rows"], "PRIMARY KEY(`". $instructions["primary"] ."`)");
 
@@ -59,6 +61,7 @@
                     {
                         array_push($this->_executions, $this->_db->insert($table, $insert));
                     }
+                    $x++;
                 }
             }
             return $this;
@@ -69,7 +72,7 @@
             return $this->_executions;
         }
 
-        public function getErrors()
+        public function getErrors() : array
         {
             $temp = array();
             foreach($this->getExecutions() as $query)

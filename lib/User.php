@@ -43,6 +43,10 @@
 
         public function create(array $fields = array())
         {
+            $query = $this->_db->get('users', array('username', '=', $fields['username']));
+            if ($query->getCount())
+                return false;
+
             $query = $this->_db->insert('users', $fields);
             if($query->hasErrors())
             {
@@ -51,6 +55,7 @@
                 throw new Exception('Creating an account has failed, due to a critical system error. Please contact a developer.');
             }
             
+            return true;
         }
 
         public function login(string $username = null, string $password = null, $remember = false)
@@ -70,7 +75,6 @@
 
                         if (!$check->getCount())
                         {
-                            echo 'inserting';
                             $this->_db->insert('users_sessions', array(
                                 'user_id' => $this->getData()->id,
                                 'hash' => $hash,
@@ -94,8 +98,22 @@
 
         public function logout()
         {
+            Cookie::delete('authlogin');
             Session::delete('user');
             $this->_isLoggedIn = false;
+        }
+
+        public function update($fields = array(), $id = null)
+        {
+            if(!$id && $this->isLoggedIn())
+            {
+                $id = $this->getData()->id;
+            }
+
+            if (!$this->_db->update('users', $id, $fields))
+            {
+                throw new Exception("An error occured updating {$id}'s account information!");
+            }
         }
 
         public function find($username = null)
@@ -115,6 +133,53 @@
             return false;
         }
 
+        public function getUserGroup($id = null)
+        {
+            if(!$id && $this->isLoggedIn())
+            {
+                $id = $this->getData()->id;
+            }
+            $userGroupData = $this->_db->get('users_groups', array('user_id', '=', $id));
+            if ($userGroupData->getCount())
+            {
+                $primary = null;
+                foreach ($userGroupData->getResults() as $result)
+                {
+                    if ($result->primary == 1)
+                    {
+                        $primary = $result;
+                        break;
+                    }
+                }
+                if (!$primary)
+                    $primary = $userGroupData->getFirst();
+                
+                if ($primary)
+                {
+                    $group = $this->_db->get('groups', array('id', '=', $primary->group_id));
+                    if ($group->getCount())
+                        return $group->getFirst();
+                }
+            }
+            return null;
+        }
+
+        public function hasPermission($perm, $id = null)
+        {
+            if(!$id && $this->isLoggedIn())
+            {
+                $id = $this->getData()->id;
+            }
+
+            $userGroup = $this->getUserGroup($id);
+
+            if ($userGroup)
+                if (json_decode($userGroup->perms)[$perm])
+                    return true;
+                    
+            return false;
+        }
+
         public function isLoggedIn()
         {
             return $this->_isLoggedIn;
@@ -124,6 +189,12 @@
         {
             return $this->_data;
         }
+
+        public function exists()
+        {
+            return (isset($this->_data));
+        }
+
 
     }
 ?>

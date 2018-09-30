@@ -18,34 +18,45 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
   </head>
   <body>
-    <?php
-    foreach($execution->getExecutions() as $execution)
-    {
-        if ($execution->hasErrors())
+    <div id="accordion">
+        <?php
+        $x = 0;
+        foreach($execution->getExecutions() as $execution)
         {
             ?>
-                <div class="alert alert-danger" role="alert">
-                    Execution failed: <br/>
-                    
-                    <?php echo implode('|', $execution->getErrors()); ?>
-                    <br/>
-                    <?php echo $execution->getExecutedSQL(); ?>
-                </div>
-            <?php
-        }
-        else
-        {
-            ?>
-                <div class="alert alert-success" role="alert">
-                    Execution Successful: <br/>
-                    
-                    <?php echo $execution->getExecutedSQL(); ?>
-                </div>
-            <?php
-        }
-    }
-    ?>
+                <div class="card border-<?php echo ($execution->hasErrors() ? 'danger' : 'success') ?>">
+                    <div class="card-header" id="heading<?php echo $x; ?>">
+                        <h5 class="">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse<?php echo $x; ?>" aria-expanded="true" aria-controls="collapse<?php echo $x; ?>">
+                                Execution <?php echo ($execution->hasErrors() ? 'wasn\'t successful' : 'successful') ?>: <br/>
+                            </button>
+                        </h5>
+                    </div>
 
+                    <div id="collapse<?php echo $x; ?>" class="collapse" aria-labelledby="heading<?php echo $x; ?>" data-parent="#accordion">
+                        <div class="card-body">
+                            <?php echo $execution->getExecutedSQL(); ?> <br/><hr/>
+                            <?php
+                                if($execution->hasErrors())
+                                {
+                                    foreach($execution->getErrors() as $error)
+                                    {
+                                        echo $error['message'] . "<br/>";
+                                    }
+                                }
+                                else
+                                {
+                                    echo 'No Errors occured!<br/>';
+                                }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            <?php
+            $x++;
+        }
+        ?>
+    </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

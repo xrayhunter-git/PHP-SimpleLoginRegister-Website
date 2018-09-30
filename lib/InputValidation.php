@@ -53,7 +53,7 @@
 
                     if($rule == 'required' && empty($input))
                     {
-                        array_push($this->_errors, "{$item} is required");
+                        $this->addError("{$item} is required");
                     }
                     else if(!empty($input))
                     {
@@ -61,15 +61,15 @@
                         {
                             case 'min':
                                 if (strlen($input) < $rule_value)
-                                    array_push($this->_errors, "{$item} must be a minimum of {$rule_value} characters!");
+                                    $this->addError("{$item} must be a minimum of {$rule_value} characters!");
                             break;
                             case 'max':
                                 if (strlen($input) > $rule_value)
-                                    array_push($this->_errors, "{$item} must be a maximum of {$rule_value} characters!");
+                                    $this->addError("{$item} must be a maximum of {$rule_value} characters!");
                             break;
                             case 'matches':
                                 if ($input != $element[$rule_value])
-                                    array_push($this->_errors, "{$rule_value} must match {$item}!");
+                                    $this->addError("{$rule_value} must match {$item}!");
                             break;
                             case 'unique':
                                 for($i = 0; $i < count($rule_value['where']); $i++)
@@ -80,7 +80,7 @@
 
                                 if($check = $this->_db->get($rule_value['table'], $rule_value['where']))
                                     if($check->getCount())
-                                        array_push($this->_errors, "{$item} already exists!");
+                                        $this->addError("{$item} already exists!");
                             break;
                         }
                     }
@@ -96,6 +96,11 @@
         public function hasPassed()
         {
             return $this->_passed;
+        }
+
+        public function addError($msg)
+        {
+            array_push($this->_errors, $msg);
         }
 
         public function getErrors()

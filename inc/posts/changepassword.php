@@ -1,39 +1,50 @@
 <?php
-require_once '../../core/init.php';
-include_once '../placeholders/languageSetup.php';
-$check = null;
-if(InputValidation::exists())
-{
-    if(Token::check('login'))
+    require_once '../../core/init.php';
+    include_once '../placeholders/languageSetup.php';
+    $check = null;
+
+
+    if (InputValidation::exists())
     {
-        $validate = new InputValidation(Config::get('mysql'));
-        $check = $validate->check($_POST, array(
-            'username' => array(
-                'required' => true
-            ),
-            'password' => array(
-                'required' => true
-            )
-        ));
-
-        if($check->hasPassed())
+        if(Token::check('update'))
         {
-            $user = new User(Config::get('mysql'));
-            $remember = (InputValidation::get('remember') == 'Yes');
-            $login = $user->login(InputValidation::get('username'), InputValidation::get('password'), $remember);
+            $validate = new InputValidation(Config::get('mysql'));
+            $check = $validate->check($_POST, array(
+                'password_current' => array(
+                    'required' => true,
+                    
+                ),
+                'password' => array(
+                    'required' => true,
+                    'min' => 8
+                ),
+                'cpassword' => array(
+                    'required' => true,
+                    'matches' => 'password'
+                )
+            ));
 
-            if ($login)
+            if($check->hasPassed())
             {
-                Session::flash('login_message', 'login_success');
-                Redirect::to("../../index.php");
-            }
-            else
-            {
-                $check->addError($langue->getDialog($lang, 'login_failed_badlogin'));
+                $user = new User(Config::get('mysql'));
+                if (Hash::make(InputValidation::get('password_current'), $user->getData()->salt) == $user->getData()->password)
+                {
+                    $salt = Hash::salt(32);
+                    $user->update(array(
+                        'password' => Hash::make(InputValidation::get('password'), $salt),
+                        'salt' => $salt
+                    ));
+
+                    Session::flash('login_message', 'login_password_change');
+                    Redirect::to("../../index.php");
+                }
+                else
+                {
+                    $check->addError('Incorrect password!');
+                }
             }
         }
     }
-}
 ?>
 
 <!doctype html>
@@ -76,14 +87,12 @@ if(InputValidation::exists())
                             }
                         }
                     ?>
-                    <?php echo $langue->getDialog($lang, "login_dialog"); ?> 
-                    <hr/>
-                    <form action='login.php' method='POST'>
+                    <form action='changepassword.php' method='POST'>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                <span class="input-group-text"><i class="fa fa-lock"></i></span>
                             </div>
-                            <input type="text" class="form-control" name='username' placeholder="<?php echo $langue->getDialog($lang, "login_username"); ?>/<?php echo $langue->getDialog($lang, "login_email"); ?> " />
+                            <input type="password" class="form-control" name='password_current' placeholder="<?php echo $langue->getDialog($lang, "login_currentpassword"); ?>/<?php echo $langue->getDialog($lang, "login_email"); ?> " />
                         </div>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
@@ -91,18 +100,15 @@ if(InputValidation::exists())
                             </div>
                             <input type="password" class="form-control" name='password' placeholder="<?php echo $langue->getDialog($lang, "login_password"); ?> " />
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name='remember' value="Yes" id="remember">
-                            <label class="form-check-label" for="remember">
-                                <?php echo $langue->getDialog($lang, "remember_me"); ?> <br/>
-                            </label>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            </div>
+                            <input type="password" class="form-control" name='cpassword' placeholder="<?php echo $langue->getDialog($lang, "login_cpassword"); ?> " />
                         </div>
-                        <?php //echo Token::generate('login'); ?>
-                        <button type="submit" class="btn btn-primary mb-2"><?php echo $langue->getDialog($lang, "login"); ?> </button>
+                        <?php echo Token::generate('update'); ?>
+                        <button type="submit" class="btn btn-primary mb-2"><?php echo $langue->getDialog($lang, "update"); ?> </button>
                     </form>
-                    <hr/>
-                    <?php echo $langue->getDialog($lang, "login_help"); ?> <br/> 
-                    <a href="#"><?php echo $langue->getDialog($lang, "login_help_link"); ?> </a> <br/>
                 </div>
             </div>
         </div>

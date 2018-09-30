@@ -13,6 +13,7 @@
             self::addDialog($l, "login_dialog", "Don't have an Account? Goto the registration tab above!");
             self::addDialog($l, "register_dialog", "Already have an Account? Goto the login tab above!");
             self::addDialog($l, "login_username", "Username");
+            self::addDialog($l, "login_currentpassword", "Current Password");
             self::addDialog($l, "login_password", "Password");
             self::addDialog($l, "login_cpassword", "Confirm Password");
             self::addDialog($l, "login_email", "E-Mail");
@@ -27,6 +28,7 @@
             self::addDialog($l, "account_profile", "Profile"); 
             self::addDialog($l, "account_settings", "Settings"); 
             self::addDialog($l, "account_logout", "Logout"); 
+            self::addDialog($l, "update", "Update");
             self::addDialog($l, "login_success", '
             <div class="alert alert-success" role="alert">
                 Welcome [name], you were successfully logged in!
@@ -35,6 +37,14 @@
             <div class="alert alert-secondary" role="alert">
                 You were successfully logged out!
             </div>'); 
+            self::addDialog($l, "login_password_change", '
+            <div class="alert alert-success" role="alert">
+                Your password was successfully changed.
+            </div>'); 
+            self::addDialog($l, "login_failed_badlogin", '
+                Sorry, we couldn\'t either find you account or your credentials do not match with this account. Please try again or <br/>
+                <a href="#">Click here for some assistance</a>!
+            '); 
         }
     }
 ?>

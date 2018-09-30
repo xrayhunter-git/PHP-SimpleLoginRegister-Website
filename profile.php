@@ -1,8 +1,24 @@
 <?php
     require_once 'core/init.php';
+    $data = null;
+    if (!$username = InputValidation::get('user'))
+        Redirect::to('index.php');
+    else
+    {
+        $user = new User(Config::get('mysql'), $username);
+        if (!$user->exists())
+        {
+            Redirect::to(404);
+        }
+        else
+        {
+            $data = $user->getData();
+        }
+    }
 
     include_once 'inc/placeholders/languageSetup.php';
 ?>
+
 
 <!doctype html>
 <html lang="en">
@@ -24,9 +40,7 @@
     
     <!-- Where to place content [START] -->
 
-    <?php
-        echo $langue->getDialog($lang, Session::flash('login_message'), isset($user->getData()->username) ? array('[name]' => ucfirst($user->getData()->username)) : array());
-    ?>
+    
 
     <!-- Where to place content [END] -->
 

@@ -5,13 +5,18 @@
 
         private function __construct() { }
         
-        protected function addPackageTable($table, $rows = array())
+        protected function addPackageTable($table, $rows = array(), $primary = null)
         {
             $this->_product[$table] = array(
                 "rows" => $rows,
                 "primary" => "",
                 "inserts" => array()
             );
+            
+            if ($primary)
+            {
+                $this->setPackageTablePrimaryKey($table, $primary);
+            }
         }
 
         protected function setPackageTableRows($table, $rows = array())

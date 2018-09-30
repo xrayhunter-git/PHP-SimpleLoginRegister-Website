@@ -10,7 +10,8 @@
             'sql_user' => 'root', // Required
             'sql_pass' => '', // Required
             'sql_db' => 'easySQLLib' // Optional
-        )
+        ),
+        'website' => 'http://localhost/github/PHP-SimpleLoginRegister-Website/'
     );
 	
     // Load normal Libraries:

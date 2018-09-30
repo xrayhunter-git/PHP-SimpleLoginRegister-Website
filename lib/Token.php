@@ -10,7 +10,6 @@
         public static function check(string $name = 'form')
         {
             $name = 'Token_' . $name;
-            echo $name . '<br/>';
             if(Session::exists($name) && InputValidation::get($name) == Session::get($name))
             {
                 Session::delete($name);
