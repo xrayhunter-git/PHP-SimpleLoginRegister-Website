@@ -27,6 +27,14 @@
             self::addDialog($l, "account_profile", "Profil"); 
             self::addDialog($l, "account_settings", "Paramètres"); 
             self::addDialog($l, "account_logout", "Connectez - Out"); 
+            self::addDialog($l, "login_success", '
+            <div class="alert alert-success" role="alert">
+                Bienenvue [name], vous avez été connecté avec succès!
+            </div>'); 
+            self::addDialog($l, "login_logout", '
+            <div class="alert alert-secondary" role="alert">
+                Vous avez été déconnecté avec succès!
+            </div>'); 
         }
     }
 ?>

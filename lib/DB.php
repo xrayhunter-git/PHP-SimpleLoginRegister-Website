@@ -13,23 +13,20 @@
                 $_con = null,
                 $_conData = array();
 
+        /**
+            'type' => 'pdo', // Optional [Defaults: PDO]
+            'sql_ip' => '127.0.0.1', // Required
+            'sql_port' => 3306, // Required
+            'sql_user' => 'root', // Required
+            'sql_pass' => '', // Required
+            'sql_db' => 'easySQLLib' // Optional
+         */
         // Constructor
         private function __construct(array $data = array(), bool $autoBuild = false)
         {
             $needs = array('sql_ip', 'sql_port', 'sql_user', 'sql_pass');
             if (!self::allInArray(array_keys($data), $needs))
             {
-                // Template of the required Array.
-                /*
-                $data = array(
-                    'type' => 'pdo', // Optional [Defaults: PDO]
-                    'sql_ip' => '127.0.0.1', // Required
-                    'sql_port' => 3306, // Required
-                    'sql_user' => 'root', // Required
-                    'sql_pass' => '', // Required
-                    'sql_db' => 'test' // Optional
-                );
-                */
                 // System auto replacer.
                 $data = array(
                     'type' => 'pdo',
@@ -87,10 +84,10 @@
             if(isset($data['sql_db']))
             {
                 if ($autoBuild)
-                    if($schema = $this->createSchema($data['sql_db']))
+                    $schema = $this->createSchema($data['sql_db']);
                         //echo $schema->getExecutedSQL() . '<br/>';
 
-                $this->query("USE " . $data['sql_db']);
+                $q = $this->query("USE " . $data['sql_db']);
             }
         }
 

@@ -28,8 +28,12 @@
             return (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2) : $this->_defaultLangue);
         }
 
-        public function getDialog($langue, $indexName) : string
+        public function getDialog($langue, $indexName = null, array $replacers = array()) : string
         {
+            if (!$indexName)
+                return '';
+
+            $str = '';
             if (!isset($GLOBALS['languages']))
                 $GLOBALS['languages'] = array();
             if (!isset($GLOBALS['languages'][$langue]))
@@ -37,10 +41,24 @@
 
             // Defaults to the main Language, if necessary.
             if(isset($GLOBALS['languages'][$langue]) && isset($GLOBALS['languages'][$langue][$indexName]))
-                return $GLOBALS['languages'][$langue][$indexName];
+                $str = $GLOBALS['languages'][$langue][$indexName];
             else if(isset($GLOBALS['languages'][$this->_defaultLangue]) && isset($GLOBALS['languages'][$this->_defaultLangue][$indexName]))
-                return $GLOBALS['languages'][$this->_defaultLangue][$indexName];
+                $str = $GLOBALS['languages'][$this->_defaultLangue][$indexName];
 
+            
+            if (strlen($str) > 0)
+            {
+                $replacerKeys = array_keys($replacers);
+                $x = 0;
+                foreach($replacers as $replacer)
+                {
+                    $str = str_replace($replacerKeys[$x], $replacer, $str);
+                    $x++;
+                }
+                
+                return $str;
+            }
+            
             return "{".$langue."_".$indexName."}";
         }
 

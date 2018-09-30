@@ -1,11 +1,16 @@
 <?php
     require_once 'core/init.php';
-    $_SESSION['username'] = null;
     // Language Module
     $langue = Language::create('en');
     $langue->addLanguage(new Langue_EN());
     $langue->addLanguage(new Langue_FR());
-    $lang = (isset($_GET['lang']) ? $_GET['lang'] : $langue->getBrowserLanguage());
+
+    if (isset($_GET['lang']))
+        $_SESSION['lang'] = $_GET['lang'];
+
+    $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : $langue->getBrowserLanguage());
+
+    $user = new User(Config::get('mysql'));
 ?>
 
 <!doctype html>
@@ -46,7 +51,7 @@
                 <button class="btn btn-outline-light dropdown-toggle my-2 my-sm-0" type="button" id="country" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="flag-icon flag-icon-<?php echo $langue->getDialog($lang, "flag"); ?>"></span>
                 </button>
-                <div class="dropdown-menu" aria-labelledby="country">
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="country">
                     <?php
                         $keys = array_keys($GLOBALS['languages']);
                         foreach($keys as $flag)
@@ -59,7 +64,7 @@
                 </div>
             </div>
             <?php
-                if(!isset($_SESSION['username']))
+                if(!$user->isLoggedIn())
                 {
             ?>
             <button type="button" class="btn btn-inline btn-outline-success my-2 my-sm-0" data-toggle="modal" data-target="#modelId">
@@ -91,36 +96,38 @@
                                 <div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
                                     <?php echo $langue->getDialog($lang, "login_dialog"); ?> 
                                     <hr/>
-                                    <form>
+                                    <form action='./inc/posts/login.php' method='POST'>
                                         <div class="input-group mb-3">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fa fa-user"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" placeholder="<?php echo $langue->getDialog($lang, "login_username"); ?>/<?php echo $langue->getDialog($lang, "login_email"); ?> " />
+                                            <input type="text" class="form-control" name='username' placeholder="<?php echo $langue->getDialog($lang, "login_username"); ?>/<?php echo $langue->getDialog($lang, "login_email"); ?> " />
                                         </div>
                                         <div class="input-group mb-3">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                             </div>
-                                            <input type="password" class="form-control" placeholder="<?php echo $langue->getDialog($lang, "login_password"); ?> " />
+                                            <input type="password" class="form-control" name='password' placeholder="<?php echo $langue->getDialog($lang, "login_password"); ?> " />
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="remembering">
-                                            <label class="form-check-label" for="remembering">
+                                            <input class="form-check-input" type="checkbox" name='remember' value="Yes" id="remember">
+                                            <label class="form-check-label" for="remember">
                                                 <?php echo $langue->getDialog($lang, "remember_me"); ?> <br/>
                                             </label>
                                         </div>
+                                        <?php echo Token::generate('login'); ?>
                                         <button type="submit" class="btn btn-primary mb-2"><?php echo $langue->getDialog($lang, "login"); ?> </button>
                                     </form>
                                     <hr/>
                                     <?php echo $langue->getDialog($lang, "login_help"); ?> <br/> 
                                     <a href="#"><?php echo $langue->getDialog($lang, "login_help_link"); ?> </a> <br/>
                                 </div>
+
                                 <!-- Registration Tab -->
                                 <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="pills-register-tab">
                                     <?php echo $langue->getDialog($lang, "register_dialog"); ?><br/>
                                     <hr/>
-                                    <form action="" method="post">
+                                    <form action="./inc/posts/register.php" method="post">
                                         <div class="input-group mb-3">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fa fa-user"></i></span>
@@ -163,7 +170,7 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <?php echo Token::generate('register'); ?>
                                         <button type="submit" name="submit" class="btn btn-primary mb-2"><?php echo $langue->getDialog($lang, "register_btn"); ?></button>
                                     </form>
                                 </div>
@@ -181,13 +188,13 @@
                     <div class="dropdown">
                         <button class="btn btn-outline-success dropdown-toggle" type="button" id="accountDrop" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
-                                    <?php echo $_SESSION['username']; ?>
+                                    <?php echo $user->getData()->username; ?>
                                 </button>
-                        <div class="dropdown-menu" aria-labelledby="accountDrop">
-                            <a class="dropdown-item" href="profile.php?lang=<?php echo $lang; ?>"><?php echo $langue->getDialog($lang, "account_profile"); ?></a>
-                            <a class="dropdown-item" href="profile_settings.php?lang=<?php echo $lang; ?>"><?php echo $langue->getDialog($lang, "account_settings");?></a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDrop">
+                            <a class="dropdown-item" href="profile.php"><?php echo $langue->getDialog($lang, "account_profile"); ?></a>
+                            <a class="dropdown-item" href="profile_settings.php"><?php echo $langue->getDialog($lang, "account_settings");?></a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="logout.php?lang=<?php echo $lang; ?>"><?php echo $langue->getDialog($lang, "account_logout");?></a>
+                            <a class="dropdown-item" href="./inc/posts/logout.php"><?php echo $langue->getDialog($lang, "account_logout");?></a>
                         </div>
                     </div>
                     <?php
@@ -199,6 +206,10 @@
     </nav>
     
     <!-- Where to place content [START] -->
+
+    <?php
+        echo $langue->getDialog($lang, Session::flash('login_message'), isset($user->getData()->username) ? array('[name]' => ucfirst($user->getData()->username)) : array());
+    ?>
 
     <!-- Where to place content [END] -->
 

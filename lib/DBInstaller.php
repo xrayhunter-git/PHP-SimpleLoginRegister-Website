@@ -6,6 +6,14 @@
                 $_db = null,
                 $_executions = array();
 
+        /**
+            'type' => 'pdo', // Optional [Defaults: PDO]
+            'sql_ip' => '127.0.0.1', // Required
+            'sql_port' => 3306, // Required
+            'sql_user' => 'root', // Required
+            'sql_pass' => '', // Required
+            'sql_db' => 'easySQLLib' // Optional
+         */
         private function __construct($type = array())
         {
             $this->_db = DB::create( $type, true );

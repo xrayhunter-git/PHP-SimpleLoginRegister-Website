@@ -27,6 +27,14 @@
             self::addDialog($l, "account_profile", "Profile"); 
             self::addDialog($l, "account_settings", "Settings"); 
             self::addDialog($l, "account_logout", "Logout"); 
+            self::addDialog($l, "login_success", '
+            <div class="alert alert-success" role="alert">
+                Welcome [name], you were successfully logged in!
+            </div>'); 
+            self::addDialog($l, "login_logout", '
+            <div class="alert alert-secondary" role="alert">
+                You were successfully logged out!
+            </div>'); 
         }
     }
 ?>

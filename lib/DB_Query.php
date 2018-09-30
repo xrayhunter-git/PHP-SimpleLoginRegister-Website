@@ -162,7 +162,7 @@
                     return $this;
                 }
             }
-            return false;
+            return $this;
         }
 
         public function createTable($table, $fields = array())
@@ -291,7 +291,7 @@
             return $this->_sql;
         }
 
-        public function getCount() : uint
+        public function getCount()
         {
             return $this->_count;
         }
