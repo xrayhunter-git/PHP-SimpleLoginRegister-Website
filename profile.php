@@ -1,15 +1,13 @@
 <?php
     require_once 'core/init.php';
-    $user = null;
+    $profile = null;
     if (!$username = InputValidation::get('user'))
         Redirect::to('index.php');
     else
     {
-        $user = new User(Config::get('mysql'), $username);
-        if (!$user->exists())
-        {
+        $profile = new User(Config::get('mysql'), $username);
+        if (!$profile || !$profile->exists())
             Redirect::to(404);
-        }
     }
 
     include_once 'inc/placeholders/languageSetup.php';
@@ -28,6 +26,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.0/css/flag-icon.css">
+    <link rel="stylesheet" href="<?php echo Config::get('website');?>res/css/userprofile.css">
   </head>
   <body>
     <?php 
@@ -36,16 +35,25 @@
     
     <!-- Where to place content [START] -->
     <div class='container justify-content-center'>
-            <div class="card ">
-                <img class="card-img-top" src="<?php echo Config::get('website'); ?>res/imgs/default_profile.png" alt="">
-                <h6 class="card-subtitle mb-2 text-muted"><?php echo $user->getData()->username; ?></h6>
-                <div class="card-body">
-                    <p class="card-text">
-                        <h3>Bio:</h3><hr/>
-                        <?php echo $user->getData()->bio; ?>
-                    </p>
+        <div class="card">
+            <div class="card-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <img class="user" src="<?php echo Config::get('website'); ?>res/imgs/default_profile.png" alt="">
+                        </div>
+                        <div class="col-md">
+                            <h6 class="mb-2 text-muted"><?php echo str_upperfirst($profile->getData()->username); ?></h6>
+                            <span class="expandableText"><?php echo $profile->getData()->bio; ?></span>
+                        </div>
+                    </div>
                 </div>
             </div>
+            
+            <div class="card-body" style="min-height: 50vh;">
+                
+            </div>
+        </div>
     </div>
 
     <!-- Where to place content [END] -->
@@ -61,5 +69,6 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
+    <script src="<?php echo Config::get('website');?>res/js/jQuery_readmore.js"></script>
   </body>
 </html>

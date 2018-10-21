@@ -67,6 +67,10 @@
                                 if (strlen($input) > $rule_value)
                                     $this->addError("{$item} must be a maximum of {$rule_value} characters!");
                             break;
+                            case 'regex':
+                                if (count(preg_match($element[$rule_value], $input)) > 1)
+                                    $this->addError("{$rule_value} must have more complex letters in {$item}!");
+                            break;
                             case 'matches':
                                 if ($input != $element[$rule_value])
                                     $this->addError("{$rule_value} must match {$item}!");

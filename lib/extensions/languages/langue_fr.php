@@ -45,6 +45,19 @@
                 Désolé, nous n\'avons pas pu trouver votre compte ou vos informations d\'identification ne correspondent pas à ce compte. Veuillez réessayer ou <br/>
                 <a href="#">cliquez ici pour obtenir de l\'aide</a>!
             '); 
+            self::addDialog($l, "login_failed_noauth", '
+                Désolé, cet ordinateur n\'a pas accès à ce compte. Nous avons envoyé un certificat d\'autorisation à votre courrier électronique pour vous vérifier.<br/>
+                <a href="#">Renvoyer la certification d\'autorisation à mon courrier électronique</a>
+            '); 
+            self::addDialog($l, "login_failed_notverified", '
+                Désolé, vous devez vérifier votre email avant de vous connecter!<br/>
+                <a href="#">Renvoyer la vérification à mon courrier électronique</a>
+            '); 
+            self::addDialog($l, "auto_logout", '
+                <div class="alert alert-secondary" role="alert">
+                    Nous vous avons déconnecté de notre compte pour empêcher tout type d’attaque contre votre compte pendant que vous êtes inactif.<br/>
+                </div>
+            '); 
         }
     }
 ?>

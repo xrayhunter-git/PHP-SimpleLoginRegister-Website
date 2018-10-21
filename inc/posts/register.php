@@ -20,6 +20,7 @@ if(InputValidation::exists())
             ),
             'password' => array(
                 'required' => true,
+                'regex' => '/[^A-Za-z0-9]/',
                 'min' => 2,
             ),
             'cpassword' => array(

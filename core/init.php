@@ -1,4 +1,5 @@
 <?php
+    $initialLoadTime = time();
     session_start();
 	
     // Generates a configuration.

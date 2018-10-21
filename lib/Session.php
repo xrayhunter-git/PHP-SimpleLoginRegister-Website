@@ -1,6 +1,11 @@
 <?php
     class Session
     {
+        public static function regenerate()
+        {
+            session_regenerate_id();
+        }
+
         public static function put(string $name, string $value)
         {
             return $_SESSION[$name] = $value;
@@ -36,8 +41,6 @@
             }
 
             self::put($name, $content);
-            
-            echo $content;
         }
     }
 ?>

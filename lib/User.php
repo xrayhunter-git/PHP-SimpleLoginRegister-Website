@@ -18,6 +18,8 @@
                     if ($this->find($user))
                     {
                         $this->_isLoggedIn = true;
+                
+                        $this->resecure();
                     }
                     else
                     {
@@ -31,13 +33,20 @@
                         $this->_isLoggedIn = true;
                         Session::put("user", $check->getFirst()->user_id);
                         $this->find($check->getFirst()->user_id);
+                
+                        $this->resecure();
                     }
                 }
                 
             }
             else
-            {
                 $this->find($user);
+
+            if($this->_isLoggedIn && !$this->is_session_valid())
+            {
+                $this->logout();
+                // Flash a Message to the user...
+                Session::flash('login_message', 'auto_logout');
             }
         }
 
@@ -60,15 +69,12 @@
 
         public function loginCheck(string $username = null, string $password = null, $remember = false)
         {
-            
             $user = $this->find($username);
 
             if ($user)
             {
                 if($this->getData()->password == Hash::make($password, $this->getData()->salt))
-                {
                     return true;
-                }
             }
 
             return false;
@@ -101,6 +107,8 @@
                     Cookie::put('authlogin', $hash, 604800);
                 }
 
+                $this->resecure();
+
                 return true;
             }
 
@@ -115,7 +123,7 @@
             {
                 $myIP = grabClientIPAddress();
                 $authIPs = json_decode($this->getData()->authIPAddresses);
-
+                
                 if (in_array($myIP, $authIPs))
                     return true;
             }
@@ -150,18 +158,12 @@
         public function update($fields = array(), $id = null)
         {
             if(!$id && $this->isLoggedIn())
-            {
                 $id = $this->getData()->id;
-            }
 
             if (!($q = $this->_db->update('users', array('id', '=', $id), $fields)))
-            {
                 throw new Exception("An error occured updating {$id}'s account information!");
-            }
             else
-            {
                 return $this;
-            }
 
             return false;
         }
@@ -186,9 +188,8 @@
         public function getUserGroup($id = null)
         {
             if(!$id && $this->isLoggedIn())
-            {
                 $id = $this->getData()->id;
-            }
+
             $userGroupData = $this->_db->get('users_groups', array('user_id', '=', $id));
             if ($userGroupData->getCount())
             {
@@ -217,9 +218,7 @@
         public function hasPermission($perm, $id = null)
         {
             if(!$id && $this->isLoggedIn())
-            {
                 $id = $this->getData()->id;
-            }
 
             $userGroup = $this->getUserGroup($id);
 
@@ -245,6 +244,50 @@
             return (isset($this->_data));
         }
 
+        private function resecure()
+        {
+            Session::regenerate();
+            session::put("ip", grabClientIPAddress());
+            session::put("agent", $_SERVER['HTTP_USER_AGENT']);
+            session::put("last_login", time());
+        }
+
+        private function is_session_ipMatch()
+        {
+            if(empty(Session::get("ip")) || empty(grabClientIPAddress()))
+                return false;
+            
+            return Session::get("ip") == grabClientIPAddress();
+        }
+
+        private function is_session_agentMatch()
+        {
+            if(empty(Session::get("agent")) || !isset($_SERVER['HTTP_USER_AGENT']))
+                return false;
+
+            return Session::get("agent") == $_SERVER['HTTP_USER_AGENT']; // False?
+        }
+
+        private function is_session_recentLogin($maxSeconds = 0, $maxMinutes = 0, $maxHours = 0, $maxDays = 0, $maxWeeks = 0)
+        {
+            if (empty(Session::get("last_login")))
+                return false;
+
+            $elapse = 60 * 60 * 24; // One day.
+            return (Session::get("last_login") + $elapse) >= time();
+        }
+
+        private function is_session_valid($checkIP = true, $checkUserAgent = true, $checkLastLogin = true)
+        {
+            if ($checkIP && !$this->is_session_ipMatch())
+                return false;
+            if ($checkUserAgent && !$this->is_session_agentMatch())
+                return false;
+            if ($checkLastLogin && !$this->is_session_recentLogin())
+                return false;
+
+            return true;
+        }
 
     }
 ?>

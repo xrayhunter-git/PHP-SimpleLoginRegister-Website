@@ -5,7 +5,7 @@
     $user = new User(Config::get('mysql'));
 ?>
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-        <a class="navbar-brand" href="#"><?php echo $langue->getDialog($lang, "company") ?></a>
+        <a class="navbar-brand" href="<?php echo Config::get('website'); ?>index.php"><?php echo $langue->getDialog($lang, "company") ?></a>
 
         <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -165,7 +165,7 @@
                     <div class="dropdown">
                         <button class="btn btn-outline-success dropdown-toggle" type="button" id="accountDrop" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
-                                    <?php echo $user->getData()->username; ?>
+                                    <?php echo str_upperfirst($user->getData()->username); ?>
                                 </button>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDrop">
                             <a class="dropdown-item" href="<?php echo Config::get('website'); ?>profile.php?user=<?php echo $user->getData()->username; ?>"><?php echo $langue->getDialog($lang, "account_profile"); ?></a>

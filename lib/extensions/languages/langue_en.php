@@ -53,6 +53,11 @@
                 Sorry, you need to verify your e-mail before logging in! <br/>
                 <a href="#">Resend Verification to my E-Mail</a>
             '); 
+            self::addDialog($l, "auto_logout", '
+                <div class="alert alert-secondary" role="alert">
+                    We logged you out of our account to prevent any type of attacks towards you account, while you\'re idle.<br/>
+                </div>
+            '); 
         }
     }
 ?>

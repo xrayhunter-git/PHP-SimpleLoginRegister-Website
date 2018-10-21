@@ -25,7 +25,9 @@
                 <h6><a href="#">Privacy</a> | <a href="#">Terms</a></h6>
             </div>
             <div class="col-sm">
-                One of three columns
+                <h3>Website Status:</h3>
+                <p><?php echo correctByteSize(memory_get_usage()) . "/" . correctByteSize(memory_get_peak_usage());?></p>
+                <p>Load Time Took: <?php echo correctTime(time() - $initialLoadTime); ?></p>
             </div>
         </div>
     </div>
