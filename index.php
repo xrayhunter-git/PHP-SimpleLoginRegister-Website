@@ -71,12 +71,12 @@
                                     <ul>
                                         <li>Added requirements for more complex passwords.</li>
                                     </ul>
-                                    Updated Profile. <br/>
+                                    Updated & Fixed Profile. <br/>
                                     <ul>
                                         <li>Reorgnaized the UI for the profile.</li>
                                         <li>Fixed non-logged in user's errors, while viewing another person's profile.</li>
                                     </ul>
-                                    Updated Index <br/>
+                                    Updated Index. <br/>
                                     <ul>
                                         <li>Replaced the Placeholder text to the Changelogs under the news.</li>
                                         <li>Added the new JS and CSS Library of Readmore.</li>
@@ -84,7 +84,7 @@
                                     Updated English Language Dialog. <br/>
                                     Updated French Language Dialog. <br/>
                                     Added Internal StyleSheet. <br/>
-                                    Added JQuery ReadMore Script. <br/>
+                                    Added JQuery ReadMore Script. <br/> 
                                 </span>
                             </li>
                             <li class="list-group-item">
