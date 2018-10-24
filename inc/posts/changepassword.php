@@ -66,7 +66,7 @@
     ?>
     
     <!-- Where to place content [START] -->
-    <div class="row justify-content-center" style="margin: 50px">
+    <div class="row justify-content-center" style="margin: 0px 50vh;">
         <div class="col col-sm-6">
             <div class="card">
                 <div class="card-header">

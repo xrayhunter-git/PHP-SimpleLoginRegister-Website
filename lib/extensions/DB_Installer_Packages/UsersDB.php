@@ -7,7 +7,7 @@
                 "id" => "INT(11) NOT NULL AUTO_INCREMENT",
                 "username" => "VARCHAR(50) NOT NULL",
                 "password" => "TEXT NOT NULL",
-                "salt" => "VARCHAR(32) NOT NULL",
+                "salt" => "TEXT NOT NULL",
                 "email" => "TEXT NOT NULL",
                 "legalName" => "TEXT NOT NULL",
                 "bio" => "TEXT NOT NULL",
@@ -32,7 +32,7 @@
             parent::addPackageTable("groups", array(
                 "id" => "INT(11) NOT NULL AUTO_INCREMENT",
                 "name" => "TEXT NOT NULL",
-                "inhertsFrom" => "TEXT NOT NULL",
+                "inheritsFrom" => "TEXT NOT NULL",
                 "cannotTarget" => "TEXT NOT NULL",
                 "perms" => "TEXT NOT NULL"
             ), 'id');
@@ -41,6 +41,12 @@
                 "key" => "TEXT NOT NULL",
                 "field" => "TEXT NOT NULL"
             ), 'id');
+            
+            // Default Groups:
+            parent::addPackageTableInsert("groups", array("name" => "User", "perms" => json_encode(array())));
+            parent::addPackageTableInsert("groups", array("name" => "Moderator", "inheritsFrom" => "User", "cannotTarget" => "Administrator", "perms" => json_encode(array())));
+            parent::addPackageTableInsert("groups", array("name" => "Administrator", "inheritsFrom" => "Moderator", "cannotTarget" => "Founder", "perms" => json_encode(array())));
+            parent::addPackageTableInsert("groups", array("name" => "Founder", "inheritsFrom" => "Administrator", "perms" => json_encode(array())));
         }
     }
 ?>

@@ -1,19 +1,22 @@
 <?php
     $initialLoadTime = time();
     session_start();
-	
-    // Generates a configuration.
-    $GLOBALS['config'] = array(
-        'mysql' => array(
-            'type' => 'pdo', // Optional [Defaults: PDO]
-            'sql_ip' => '127.0.0.1', // Required
-            'sql_port' => 3306, // Required
-            'sql_user' => 'root', // Required
-            'sql_pass' => '', // Required
-            'sql_db' => 'easySQLLib' // Optional
-        ),
-        'website' => 'http://localhost/github/PHP-SimpleLoginRegister-Website/'
-    );
+    
+    if (file_exists(__DIR__.'/../config.php'))
+    { 
+        /*$GLOBALS['config'] = array(
+            'mysql' => array(
+                'type' => 'pdo', // Optional [Defaults: PDO]
+                'sql_ip' => '127.0.0.1', // Required
+                'sql_port' => 3306, // Required
+                'sql_user' => 'root', // Required
+                'sql_pass' => '', // Required
+                'sql_db' => 'easySQLLib' // Optional
+            ),
+            'website' => 'http://localhost/github/PHP-SimpleLoginRegister-Website/'
+        );*/
+        include_once(__DIR__.'/../config.php');
+    }
 	
     // Load normal Libraries:
     $GLOBALS['extensions'] = array();
@@ -39,5 +42,10 @@
         {
             include_once __DIR__ . '/../funcs/' . $file;
         }
+    }
+    
+    if (!file_exists(__DIR__.'/../config.php') && !stripos($_SERVER['PHP_SELF'], 'install.php'))
+    {
+        Redirect::to(405);
     }
 ?>

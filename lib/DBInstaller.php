@@ -51,7 +51,6 @@
                 {
                     $table = array_keys($package->build())[$x];
                     
-                    echo $table;
                     if (isset($instructions['primary']))
                         array_push($instructions["rows"], "PRIMARY KEY(`". $instructions["primary"] ."`)");
 
@@ -59,7 +58,9 @@
                     
                     foreach($instructions['inserts'] as $insert)
                     {
+                        //echo $table . '<br/>';
                         array_push($this->_executions, $this->_db->insert($table, $insert));
+                        //var_dump($insert);
                     }
                     $x++;
                 }
@@ -77,7 +78,8 @@
             $temp = array();
             foreach($this->getExecutions() as $query)
             {
-                array_push($temp, $query->getErrors());
+                if (count($query->getErrors()) > 0)
+                    array_push($temp, $query->getErrors());
             }
             return $temp;
         }
@@ -92,7 +94,7 @@
             $temp = array();
             foreach($this->getExecutions() as $query)
             {
-                array_push($temp, $query->getExecutedSQL());
+                array_push($temp, $query->getOpenSQL());
             }
             return $temp;
         }

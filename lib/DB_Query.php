@@ -3,7 +3,8 @@
     {
         private $_db = null,
                 $_errors = array(),
-                $_sql = "",
+                $_sql = '',
+                $_openSQL = '',
                 $_count = 0,
                 $_results = array(),
                 $_type = 'pdo',
@@ -33,6 +34,16 @@
             $this->_errors = array();
 
             $this->_sql = $sql;
+
+            $this->_openSQL = $sql;
+            $fieldKeys = array_values($fields);
+            for($i = 0; $i < count($fieldKeys); $i++)
+            {
+                $index = strpos($this->_openSQL, '?');
+                $output = str_split($this->_openSQL);
+                $output[$index] = '\''.$fieldKeys[$i].'\'';
+                $this->_openSQL = implode("",$output);
+            }
 
             $cannotFetch = array("UPDATE", "INSERT", "CREATE", "DELETE", "USE");
             switch($this->_type)
@@ -276,6 +287,11 @@
             return $this->getResults()[0];
         }
 
+        public function getLast()
+        {
+            return $this->getResults()[count($this->getResults()) - 1];
+        }
+
         public function getErrors() : array
         {
             return $this->_errors;
@@ -284,6 +300,11 @@
         public function hasErrors() : bool
         {
             return (count($this->getErrors()) > 0);
+        }
+
+        public function getOpenSQL() : string
+        {
+            return $this->_openSQL;
         }
 
         public function getExecutedSQL() : string

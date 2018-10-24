@@ -21,9 +21,6 @@
                 
                         $this->resecure();
                     }
-                    else
-                    {
-                    }
                 }
                 elseif(Cookie::exists('authlogin'))
                 {
@@ -63,6 +60,9 @@
                 //echo $query->getExecutedSQL();
                 throw new Exception('Creating an account has failed, due to a critical system error. Please contact a developer.');
             }
+
+            
+            $user = $this->find($fields['username']);
             
             return true;
         }
@@ -185,12 +185,11 @@
             return false;
         }
 
-        public function getUserGroup($id = null)
+        public function getUserGroup($username = null)
         {
-            if(!$id && $this->isLoggedIn())
-                $id = $this->getData()->id;
+            $user = $this->find($username);
 
-            $userGroupData = $this->_db->get('users_groups', array('user_id', '=', $id));
+            $userGroupData = $this->_db->get('users_groups', array('user_id', '=', $this->getData()->id));
             if ($userGroupData->getCount())
             {
                 $primary = null;
@@ -232,6 +231,11 @@
         public function isLoggedIn()
         {
             return $this->_isLoggedIn;
+        }
+
+        public function getDB()
+        {
+            return $this->_db;
         }
 
         public function getData()

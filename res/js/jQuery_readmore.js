@@ -24,12 +24,12 @@ $(document).ready(function()
         if ($(this).hasClass("more"))
         {
             $(this).removeClass("more");
-            $(this).html(lessText);
+            $(this).html(moreText);
         }
         else
         {
             $(this).addClass("more");
-            $(this).html(moreText);
+            $(this).html(lessText);
         }
         $(this).parent().prev().toggle();
         $(this).prev().toggle();

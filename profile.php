@@ -43,7 +43,9 @@
                             <img class="user" src="<?php echo Config::get('website'); ?>res/imgs/default_profile.png" alt="">
                         </div>
                         <div class="col-md">
-                            <h6 class="mb-2 text-muted"><?php echo str_upperfirst($profile->getData()->username); ?></h6>
+                            <h4 class="mb-2"><?php echo str_upperfirst($profile->getData()->username); ?></h4>
+                            <h6 class="mb-2 text-muted"><?php echo str_upperfirst($profile->getUserGroup($profile->getData()->username)->name); ?></h6>
+                            <hr/>
                             <span class="expandableText"><?php echo $profile->getData()->bio; ?></span>
                         </div>
                     </div>

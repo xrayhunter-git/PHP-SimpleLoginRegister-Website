@@ -4,13 +4,13 @@
 
     class InputValidation
     {
-        private $_passed = false,
-                $_errors = array(),
+        private $_errors = array(),
                 $_db = null;
         
-        public function __construct(array $data = array())
+        public function __construct(array $data = null)
         {
-            $this->_db = DB::create($data, false);
+            if ($data)
+                $this->_db = DB::create($data, false);
         }
 
         public static function exists(string $type = 'post')
@@ -24,6 +24,16 @@
                     return !empty($_GET);
                 break;
             }
+
+            return false;
+        }
+
+        public static function submitted(string $element)
+        {
+            if(isset($_POST[$element]))
+                return true;
+            else if(isset($_GET[$element]))
+                return true;
 
             return false;
         }
@@ -68,8 +78,8 @@
                                     $this->addError("{$item} must be a maximum of {$rule_value} characters!");
                             break;
                             case 'regex':
-                                if (count(preg_match($element[$rule_value], $input)) > 1)
-                                    $this->addError("{$rule_value} must have more complex letters in {$item}!");
+                                if (preg_match($rule_value, $input) == 0)
+                                    $this->addError("{$item} must have more complex letters!");
                             break;
                             case 'matches':
                                 if ($input != $element[$rule_value])
@@ -81,25 +91,28 @@
                                     if ($rule_value['where'][$i] == '?')
                                         $rule_value['where'][$i] = $input;
                                 }
-
-                                if($check = $this->_db->get($rule_value['table'], $rule_value['where']))
-                                    if($check->getCount())
-                                        $this->addError("{$item} already exists!");
+                                if ($this->_db)
+                                {
+                                    if($check = $this->_db->get($rule_value['table'], $rule_value['where']))
+                                        if($check->getCount())
+                                            $this->addError("{$item} already exists!");
+                                }
+                                else
+                                {
+                                    $this->addError("Failed to connect to Database, contact a System Administrator!");
+                                }
                             break;
                         }
                     }
                 }
             }
-
-            if(empty($this->_errors))
-                $this->_passed = true;
             
             return $this;
         }
 
         public function hasPassed()
         {
-            return $this->_passed;
+            return empty($this->_errors);
         }
 
         public function addError($msg)

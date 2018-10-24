@@ -97,7 +97,7 @@ if(InputValidation::exists())
     ?>
     
     <!-- Where to place content [START] -->
-    <div class="row justify-content-center" style="margin: 50px">
+    <div class="row justify-content-center" style="margin: 10% 0px;">
         <div class="col col-sm-6">
             <div class="card">
                 <div class="card-header">

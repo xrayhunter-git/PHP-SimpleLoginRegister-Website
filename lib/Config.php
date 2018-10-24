@@ -4,6 +4,9 @@
     {
         public static function get($str)
         {
+            if (!isset($GLOBALS['config']))
+                return false;
+
             if($str)
             {
                 $config = $GLOBALS['config'];
